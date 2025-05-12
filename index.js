@@ -40,12 +40,10 @@
         console.log(`Server will run on host: ${host}, port: ${port}`);
         console.log(`Cache directory: ${cacheDir}`);
         
-        // Подальший код сервера буде тут
-                // app.js (продовження)
-        
+
         const server = http.createServer((req, res) => {
-            // Обробка запитів буде тут у Частині 2
-            res.writeHead(501, { 'Content-Type': 'text/plain' }); // 501 Not Implemented (поки що)
+
+            res.writeHead(501, { 'Content-Type': 'text/plain' }); // 501 Not Implemented 
             res.end('Not Implemented Yet');
         });
         
