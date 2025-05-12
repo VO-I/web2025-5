@@ -44,22 +44,29 @@ const server = http.createServer(async (req, res) => {
 
     switch (req.method) {
         case 'GET':
-            fs.promises.readFile(filePath)
-                .then(image => {
+            if (fs.existsSync(filePath)) {
+                const image = await fs.promises.readFile(filePath);
+                res.setHeader('Content-Type', 'image/jpeg');
+                res.statusCode = 200;
+                res.end(image);
+            } else {
+                try {
+                    const response = await require('superagent')
+                        .get(`https://http.cat${url}`)
+                        .buffer(true); // Обов'язково, щоб прочитати як бінарний буфер
+
+                    const image = response.body;
+                    await fs.promises.writeFile(filePath, image);
                     res.setHeader('Content-Type', 'image/jpeg');
                     res.statusCode = 200;
                     res.end(image);
-                })
-                .catch(err => {
-                    if (err.code === 'ENOENT') {
-                        res.statusCode = 404;
-                        res.end('Image not found');
-                    } else {
-                        res.statusCode = 500;
-                        res.end('Internal Server Error');
-                    }
-                });
+                } catch (err) {
+                    res.statusCode = 404;
+                    res.end('Image not found');
+                }
+            }
             break;
+
 
         case 'PUT':
             const chunks = [];
